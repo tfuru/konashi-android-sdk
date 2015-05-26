@@ -54,6 +54,10 @@ public class MainActivity extends KonashiActivity {
         setButtonAction(R.id.led3_button, Konashi.LED3);
         setButtonAction(R.id.led4_button, Konashi.LED4);
         setButtonAction(R.id.led5_button, Konashi.LED5);
+
+        //UART 送信テスト
+        Button uart_button = (Button)findViewById(R.id.uart_button);
+        uart_button.setOnClickListener(clickUartButton);
         
         // konashiのイベントハンドラを設定。定義は下の方にあります
         getKonashiManager().addObserver(mKonashiObserver);
@@ -103,6 +107,20 @@ public class MainActivity extends KonashiActivity {
             getKonashiManager().pinMode(Konashi.LED3, Konashi.OUTPUT);
             getKonashiManager().pinMode(Konashi.LED4, Konashi.OUTPUT);
             getKonashiManager().pinMode(Konashi.LED5, Konashi.OUTPUT);
+            
+            //UARTを有効に設定
+            getKonashiManager().uartMode(Konashi.UART_ENABLE);
+            getKonashiManager().uartBaudrate(Konashi.UART_RATE_9K6);
         }
+    };
+    
+    private final View.OnClickListener clickUartButton = new View.OnClickListener(){
+
+		@Override
+		public void onClick(View v) {
+			//UARTで1バイト送信
+			byte data = 0x01;
+			getKonashiManager().uartWrite(data);
+		}
     };
 }

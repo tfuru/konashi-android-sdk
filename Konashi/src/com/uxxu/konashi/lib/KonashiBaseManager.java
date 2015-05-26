@@ -45,6 +45,15 @@ import android.widget.Toast;
  * limitations under the License.
  *
  */
+/**
+ * konashi2に対応させる為に数カ所を修正 
+ * @author t_furu
+ * 
+ * 変更点
+ * - konahi2対応のデバイス名に変更
+ * - enableNotification
+ * 
+ */
 public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBleDeviceSelectListener {
     
     /*************************
@@ -52,7 +61,10 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *************************/
       
     private static final long SCAN_PERIOD = 3000;
-    private static final String KONAHSI_DEVICE_NAME = "konashi#";
+    //private static final String KONAHSI_DEVICE_NAME = "konashi#";    
+    //konahi2対応のデバイス名に変更
+    private static final String KONAHSI_DEVICE_NAME = "konashi2";
+    
     private static final long KONASHI_SEND_PERIOD = 10;
     
     
@@ -578,10 +590,10 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                     setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
                     return;
                 }
-        
+                
                 // available all konashi characteristics
                 setStatus(BleStatus.CHARACTERISTICS_FOUND);
-                
+                                
                 // enable notifications
                 if(!enableNotification(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){
                     setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
@@ -625,6 +637,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         if(mBluetoothGatt!=null && characteristic!=null){
             boolean registered = mBluetoothGatt.setCharacteristicNotification(characteristic, true);
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(KonashiUUID.CLIENT_CHARACTERISTIC_CONFIG);
+            if(descriptor == null){
+            	//BluetoothGattDescriptorが違う場合がある
+            	KonashiUtils.log("descriptor is null");
+            	return true;
+            }
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
             return registered;
