@@ -1,17 +1,15 @@
 package com.uxxu.konashi.sample.basic;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.uxxu.konashi.lib.*;
+import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiActivity;
+import com.uxxu.konashi.lib.KonashiObserver;
 
 public class MainActivity extends KonashiActivity {
     private static final String TAG = "KonashiSample";
@@ -95,7 +93,7 @@ public class MainActivity extends KonashiActivity {
     private final KonashiObserver mKonashiObserver = new KonashiObserver(MainActivity.this) {
         @Override
         public void onReady(){
-            Log.d(TAG, "onKonashiReady");
+            Log.d(TAG, "onReady");
             
             // findボタンのテキストをdisconnectに
             mFindButton.setText(getText(R.string.disconnect_button));
@@ -109,8 +107,20 @@ public class MainActivity extends KonashiActivity {
             getKonashiManager().pinMode(Konashi.LED5, Konashi.OUTPUT);
             
             //UARTを有効に設定
-            getKonashiManager().uartMode(Konashi.UART_ENABLE);
             getKonashiManager().uartBaudrate(Konashi.UART_RATE_9K6);
+            getKonashiManager().uartMode(Konashi.UART_ENABLE);
+        }
+        
+        /**
+         * UARTのRxからデータを受信した時
+         */
+        @Override
+        public void onCompleteUartRx(byte[] data){
+        	Log.d(TAG, "onCompleteUartRx data.length:"+data.length);
+        	 for(byte d:data){
+			    Log.d(TAG, "d:"+String.format("%02x", d));
+        	 }
+        	getKonashiManager().uartWrite(data);
         }
     };
     
@@ -118,9 +128,23 @@ public class MainActivity extends KonashiActivity {
 
 		@Override
 		public void onClick(View v) {
-			//UARTで1バイト送信
-			byte data = 0x01;
-			getKonashiManager().uartWrite(data);
+			try{
+				byte[] data = "A\n".getBytes("UTF-8");
+				getKonashiManager().uartWrite(data);
+				
+				/*
+				Log.d(TAG, "data.length:"+data.length);
+			    for(byte d:data){
+			    	Log.d(TAG, "d:"+String.format("%02x", d));
+			    	
+					//UARTで1バイトづつ送信	
+					getKonashiManager().uartWrite(d);
+				}
+				*/
+			}
+			catch(Exception e){
+				
+			}
 		}
     };
 }

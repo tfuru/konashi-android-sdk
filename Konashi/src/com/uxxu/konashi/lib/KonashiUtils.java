@@ -27,7 +27,7 @@ public class KonashiUtils {
     /**
      * デバッグモードか否か。konashiのライブラリの動きを見たかったらtrueにしてみよう
      */
-    private static final Boolean DEBUG = false;
+    private static final Boolean DEBUG = true;
 
     /**
      * Logのタグ

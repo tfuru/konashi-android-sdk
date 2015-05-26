@@ -81,10 +81,12 @@ public abstract class KonashiObserver {
      * AIO2の電圧が取得できた時
      */
     public void onUpdateAnalogValueAio2(int value){}
+    
     /**
      * UARTのRxからデータを受信した時
      */
-    public void onCompleteUartRx(byte data){}
+    public void onCompleteUartRx(byte[] data){}
+    
     /**
      * konashiのバッテリーのレベルを取得できた時
      */

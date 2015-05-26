@@ -460,8 +460,10 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                 onUpdatePioInput(value);
             }
             else if(characteristic.getUuid().equals(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
-                value = characteristic.getValue()[0];
-                onRecieveUart(value);
+                //value = characteristic.getValue()[0];
+                //onRecieveUart(value);
+                byte[] data = characteristic.getValue();
+                onRecieveUart(data);
             }
         }
 
@@ -734,6 +736,8 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *********************************/
     
     private void writeValue(UUID uuid, byte[] value){
+    	KonashiUtils.log("writeValue uuid:" + uuid.toString()+" value.length:"+value.length);
+    	
         if (mBluetoothGatt != null) {
             BluetoothGattService service = mBluetoothGatt.getService(KonashiUUID.KONASHI_SERVICE_UUID);
             BluetoothGattCharacteristic characteristic = service.getCharacteristic(uuid);
@@ -828,6 +832,14 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param data 受信データ
      */
     protected void onRecieveUart(byte data){
+        notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
+    }
+    
+    /**
+     * UARTのRxからデータを受信した時
+     * @param data 受信データ
+     */
+    protected void onRecieveUart(byte[] data){
         notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
     }
     

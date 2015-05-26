@@ -537,7 +537,13 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return;
         }
         
-        if(baudrate==Konashi.UART_RATE_2K4 || baudrate==Konashi.UART_RATE_9K6){
+        if(baudrate==Konashi.UART_RATE_2K4 
+        		|| baudrate==Konashi.UART_RATE_9K6
+        		|| baudrate==Konashi.UART_RATE_19K2
+        		|| baudrate==Konashi.UART_RATE_38K4
+        		|| baudrate==Konashi.UART_RATE_57K6
+        		|| baudrate==Konashi.UART_RATE_76K8
+        		|| baudrate==Konashi.UART_RATE_115K2){
             mUartBaudrate = (byte)baudrate;
             
             byte[] val = new byte[2];
@@ -555,21 +561,32 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param data 送信するデータ
      */
     public void uartWrite(byte data){
+        byte[] val = new byte[1];
+        val[0] = data;
+        uartWrite(val);
+    }
+    
+    /**
+     * UART でデータを送信する
+     * @param data 送信するデータ
+     */
+    public void uartWrite(byte[] data){
         if(!isEnableAccessKonashi()){
             notifyKonashiError(KonashiErrorReason.NOT_READY);
             return;
         }
         
         if(mUartSetting==Konashi.UART_ENABLE){
-            byte[] val = new byte[1];
-            val[0] = data;
-        
+            byte[] val = new byte[data.length+1];
+            //1バイト目はデータの長さ
+            val[0] = (byte) data.length;
+            //2バイト目からデータ
+            System.arraycopy(data,0,val,1,data.length);
             addWriteMessage(KonashiUUID.UART_TX_UUID, val);
         } else {
             notifyKonashiError(KonashiErrorReason.NOT_ENABLED_UART);
         }
     }
-    
     
     ///////////////////////////
     // I2C

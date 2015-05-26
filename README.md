@@ -1,3 +1,6 @@
+
+
+
 # konashi SDK for Android #alpha
 
 ![image](http://konashi.ux-xu.com/img/header_logo.png)
