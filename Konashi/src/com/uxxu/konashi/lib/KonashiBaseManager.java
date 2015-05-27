@@ -462,8 +462,12 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             else if(characteristic.getUuid().equals(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
                 //value = characteristic.getValue()[0];
                 //onRecieveUart(value);
-                byte[] data = characteristic.getValue();
-                onRecieveUart(data);
+            	//2バイト目からがデータ
+                byte[] src = characteristic.getValue();
+                int len = src.length-1;
+                byte[] dst = new byte[len];
+                System.arraycopy(src, 1, dst, 0, len);
+                onRecieveUart(dst);
             }
         }
 

@@ -129,7 +129,7 @@ public class MainActivity extends KonashiActivity {
 		@Override
 		public void onClick(View v) {
 			try{
-				byte[] data = "A\n".getBytes("UTF-8");
+				byte[] data = "ABCDEF\n".getBytes("UTF-8");
 				getKonashiManager().uartWrite(data);
 				
 				/*
@@ -140,7 +140,7 @@ public class MainActivity extends KonashiActivity {
 					//UARTで1バイトづつ送信	
 					getKonashiManager().uartWrite(d);
 				}
-				*/
+				*/				
 			}
 			catch(Exception e){
 				
